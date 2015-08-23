@@ -19,6 +19,14 @@ helpers do
     ["DELETE", "/#{resource[:plural]}/:id", "#{resource[:plural]}#destroy", "delete a specific #{resource[:singular]}"]]
   end
 
+  def get_blanks_index
+    blanks = []
+    5.times do
+      blanks << rand(28)
+    end
+    blanks
+  end
+
 end
 
 get '/' do
@@ -27,5 +35,10 @@ end
 
 get '/quiz' do
   @data_array = make_data_array
+  @blanks = get_blanks_index
   erb :quiz
+end
+
+post '/check_answer' do
+  "Hello World"
 end

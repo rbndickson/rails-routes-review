@@ -1,20 +1,30 @@
 <h1>Test Your Knowledge!</h1>
 <hr>
-<table>
+<table class="table table-bordered">
   <thead>
     <tr>
       <% @data_array.first.each do |cell| %>
-        <th id=<%=  %>><%= cell %></th>
+        <th><%= cell %></th>
       <% end %>
     </tr>
   </thead>
   <tbody>
-    <% @data_array.drop(1).each do |row| %>
+    <% @data_array.drop(1).each_with_index do |row, i| %>
       <tr>
-        <% row.each do |cell| %>
-          <td><%= cell %></td>
+        <% row.each_with_index do |cell, ii| %>
+          <% if @blanks.include?(((i * 4) + ii)) %>
+            <td>
+              <form class="form-inline" action="/check_answer" method="post">
+                <input class="input-small" type="text" name="answer">
+                <input type="submit" class="btn btn-small btn-info" value="Try"/>
+              </form>
+            </td>
+          <% else %>
+            <td id="<%= ((i * 4) + ii).to_s %>"><%= cell %></td>
+          <% end %>
         <% end %>
       </tr>
     <% end %>
   </tbody>
 </table>
+<hr>
