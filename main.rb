@@ -11,7 +11,9 @@ helpers do
     resource_array = [{:singular => "photo", :plural => "photos"},
                       {:singular => "video", :plural => "videos"},
                       {:singular => "book", :plural => "books"},
-                      {:singular => "article", :plural => "articles"}]
+                      {:singular => "article", :plural => "articles"},
+                      {:singular => "post", :plural => "posts"},
+                      {:singular => "user", :plural => "users"}]
 
     resource = resource_array[rand(4)]
     data_array = [["HTTP Verb",  "Path", "Controller#Action", "Used for"],
@@ -24,19 +26,43 @@ helpers do
     ["DELETE", "/#{resource[:plural]}/:id", "#{resource[:plural]}#destroy", "delete a specific #{resource[:singular]}"]]
   end
 
-  def get_blanks_index
+  def get_blanks(number_of_blanks)
     positions = Array (0..27)
-    blanks = positions.sample(5)
+    blanks = positions.sample(number_of_blanks)
+  end
+
+  def set_session
+    session[:data_array] = make_data_array
+    session[:correct] = []
+    session[:pass] = []
   end
 end
 
 get '/' do
-  redirect '/quiz'
+  redirect '/normal'
 end
 
-get '/quiz' do
-  session[:data_array] = make_data_array
-  session[:blanks] = get_blanks_index
+get '/normal' do
+  set_session
+  session[:blanks] = get_blanks(5)
+  erb :quiz
+end
+
+get '/hard' do
+  set_session
+  session[:blanks] = get_blanks(10)
+  erb :quiz
+end
+
+get '/extreme' do
+  set_session
+  session[:blanks] = get_blanks(20)
+  erb :quiz
+end
+
+get '/chuck_noris' do
+  set_session
+  session[:blanks] = get_blanks(27)
   erb :quiz
 end
 
@@ -44,7 +70,10 @@ post '/check_answer' do
   id = params['id'].to_i
   answer_array = session[:data_array][1..7]
   correct_answer = answer_array[id/4][id%4]
-  session[:blanks].delete(id) if params['answer'] == correct_answer
+  if params['answer'] == correct_answer
+    session[:blanks].delete(id)
+    session[:correct] << id
+  end
   erb :quiz
 end
 
