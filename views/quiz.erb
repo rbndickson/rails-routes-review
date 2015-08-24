@@ -24,6 +24,8 @@
             </td>
           <% elsif session[:correct].include?(((i * 4) + ii))%>
             <td class="success" id="<%= ((i * 4) + ii).to_s %>"><%= cell %></td>
+          <% elsif session[:pass].include?(((i * 4) + ii))%>
+            <td class="pass" id="<%= ((i * 4) + ii).to_s %>"><%= cell %></td>
           <% else %>
             <td id="<%= ((i * 4) + ii).to_s %>"><%= cell %></td>
           <% end %>

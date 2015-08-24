@@ -80,5 +80,6 @@ end
 post '/show_answer' do
   id = params['id'].to_i
   session[:blanks].delete(id)
+  session[:pass] << id
   erb :quiz
 end
