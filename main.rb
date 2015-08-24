@@ -1,5 +1,10 @@
 require 'sinatra'
 require 'pry'
+
+use Rack::Session::Cookie, :key => 'rack.session',
+                           :path => '/',
+                           :secret => 'hbjQUnA4zaksWyjrx86y'
+
 helpers do
 
   def make_data_array
@@ -20,13 +25,9 @@ helpers do
   end
 
   def get_blanks_index
-    blanks = []
-    5.times do
-      blanks << rand(28)
-    end
-    blanks
+    positions = Array (0..27)
+    blanks = positions.sample(5)
   end
-
 end
 
 get '/' do
@@ -34,11 +35,21 @@ get '/' do
 end
 
 get '/quiz' do
-  @data_array = make_data_array
-  @blanks = get_blanks_index
+  session[:data_array] = make_data_array
+  session[:blanks] = get_blanks_index
   erb :quiz
 end
 
 post '/check_answer' do
-  "Hello World"
+  id = params['id'].to_i
+  answer_array = session[:data_array][1..7]
+  correct_answer = answer_array[id/4][id%4]
+  session[:blanks].delete(id) if params['answer'] == correct_answer
+  erb :quiz
+end
+
+post '/show_answer' do
+  id = params['id'].to_i
+  session[:blanks].delete(id)
+  erb :quiz
 end

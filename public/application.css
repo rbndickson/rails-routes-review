@@ -1,9 +1,10 @@
 body {
-  font-size: 12pt;
+  font-size: 11pt;
 }
 
 form {
   margin: 0px;
+  display: inline;
 }
 
 .table td {
