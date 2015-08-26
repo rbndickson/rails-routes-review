@@ -1,9 +1,10 @@
 <table class="table table-bordered">
   <thead>
     <tr>
-      <% session[:data_array].first.each do |cell| %>
-        <th><%= cell %></th>
-      <% end %>
+      <th><%= session[:data_array].first[0] %></th>
+      <th><%= session[:data_array].first[1] %></th>
+      <th><%= session[:data_array].first[2] %></th>
+      <th class="span5"><%= session[:data_array].first[3] %></th>
     </tr>
   </thead>
   <tbody>
@@ -15,7 +16,7 @@
               <form class="form-inline" id="check_answer_form" action="/check_answer" method="post">
                 <input class="input-small" type="text" name="answer">
                 <input type="hidden" name="id" value="<%= ((i * 4) + ii).to_s %>" />
-                <input type="submit" class="btn btn-small btn-info" value="Try"/>
+                <!-- <input type="submit" class="btn btn-small btn-info" value="Try"/> -->
               </form>
               <form class="form" id="show_answer_form" action="/show_answer" method="post">
                 <input type="hidden" name="id" value="<%= ((i * 4) + ii).to_s %>" />

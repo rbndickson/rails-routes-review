@@ -7,8 +7,13 @@ form {
   display: inline;
 }
 
+table {
+  table-layout: fixed;
+}
+
 .table td {
   vertical-align: middle;
+  line-height: 30px;
 }
 
 td.success {
