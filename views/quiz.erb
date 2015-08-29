@@ -1,38 +1,35 @@
 <table class="table table-bordered">
+
   <thead>
     <tr>
-      <th><%= session[:data_array].first[0] %></th>
-      <th><%= session[:data_array].first[1] %></th>
-      <th><%= session[:data_array].first[2] %></th>
-      <th class="span5"><%= session[:data_array].first[3] %></th>
+      <th><%= title_row[:title_0] %></th>
+      <th><%= title_row[:title_1] %></th>
+      <th><%= title_row[:title_2] %></th>
+      <th class="span5"><%= title_row[:title_3] %></th>
     </tr>
   </thead>
+
   <tbody>
-    <% session[:data_array].drop(1).each_with_index do |row, i| %>
+    <% session[:display_data].each do |route, col_title |  %>
       <tr>
-        <% row.each_with_index do |cell, ii| %>
-          <% if session[:blanks].include?(((i * 4) + ii)) %>
-            <td id="<%= ((i * 4) + ii).to_s %>">
-              <form class="form-inline" id="check_answer_form" action="/check_answer" method="post">
-                <input class="input-small" type="text" name="answer">
-                <input type="hidden" name="id" value="<%= ((i * 4) + ii).to_s %>" />
-                <!-- <input type="submit" class="btn btn-small btn-info" value="Try"/> -->
-              </form>
-              <form class="form" id="show_answer_form" action="/show_answer" method="post">
-                <input type="hidden" name="id" value="<%= ((i * 4) + ii).to_s %>" />
-                <input type="submit" class="btn btn-small btn-warning" value="?"/>
-              </form>
-            </td>
-          <% elsif session[:correct].include?(((i * 4) + ii))%>
-            <td class="success" id="<%= ((i * 4) + ii).to_s %>"><%= cell %></td>
-          <% elsif session[:pass].include?(((i * 4) + ii))%>
-            <td class="pass" id="<%= ((i * 4) + ii).to_s %>"><%= cell %></td>
+        <% col_title.each do |col_title, cell_text| %>
+          <% if cell_text == "" %>
+
+          <td id=<%= "#{route}#{col_title}_cell" %>>
+            <form class="form-inline" id="check_answer" action="/check_answer" method="post">
+              <input class="input-small" id=<%= "#{route}/#{col_title}" %> type="text" name="user_answer" autofocus></input>
+            </form>
+            <button type="submit" id="show_answer_button" class="btn btn-small btn-warning" tabIndex="-1" value=<%= "#{route}/#{col_title}" %>>reveal</button>
+          </td>
+
           <% else %>
-            <td id="<%= ((i * 4) + ii).to_s %>"><%= cell %></td>
+            <td id=<%= "#{route}#{col_title}" %>><%= cell_text %></td>
           <% end %>
+
         <% end %>
       </tr>
     <% end %>
   </tbody>
+
 </table>
 <hr>

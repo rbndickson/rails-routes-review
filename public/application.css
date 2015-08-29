@@ -13,7 +13,7 @@ table {
 
 .table td {
   vertical-align: middle;
-  line-height: 30px;
+  line-height: 32px;
 }
 
 td.success {
@@ -27,4 +27,10 @@ td.pass {
   color: #a94442;
   background-color: #f2dede;
   border-color: #ebcccc;
+}
+
+td.error {
+  color: red;
+  background-color: red;
+  border-color: red;
 }
