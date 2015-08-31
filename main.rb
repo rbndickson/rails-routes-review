@@ -8,14 +8,13 @@ use Rack::Session::Cookie, :key => 'rack.session',
 helpers do
 
   def resources
-    resources = [
-      {singular: "photo", plural: "photos"},
-      {singular: "video", plural: "videos"},
-      {singular: "book", plural: "books"},
-      {singular: "article", plural: "articles"},
-      {singular: "post", plural: "posts"},
-      {singular: "user", plural: "users"}
-    ]
+    resources =
+      [{singular: "photo", plural: "photos"},
+       {singular: "video", plural: "videos"},
+       {singular: "book", plural: "books"},
+       {singular: "article", plural: "articles"},
+       {singular: "post", plural: "posts"},
+       {singular: "user", plural: "users"}]
   end
 
   def choose_resource
