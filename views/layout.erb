@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script src="/application.js"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 </head>
@@ -15,13 +16,34 @@
 <body style="padding-top: 50px;">
   <div class="container">
     <h3>Know Your Rails Routes!</h3>
-    <ul class="nav nav-pills">
-      <li<%=' class="active"' if session[:level]== :normal %> ><a href="/normal" tabIndex="-1">Normal</a></li>
-      <li<%=' class="active"' if session[:level]== :hard %>><a href="/hard" tabIndex="-1">Hard</a></li>
-      <li<%=' class="active"' if session[:level]== :extreme %>><a href="/extreme" tabIndex="-1">Extreme</a></li>
-      <li<%=' class="active"' if session[:level]== :chuck %>><a href="/chuck_noris" tabIndex="-1">Chuck Noris</a></li>
-    </ul>
-    <%= yield %>
+    <div>
+      <ul class="nav nav-pills">
+        <li<%=' class="active"' if session[:level]== :normal %> ><a href="/normal" tabIndex="-1">Normal</a></li>
+        <li<%=' class="active"' if session[:level]== :hard %>><a href="/hard" tabIndex="-1">Hard</a></li>
+        <li<%=' class="active"' if session[:level]== :extreme %>><a href="/extreme" tabIndex="-1">Extreme</a></li>
+        <li<%=' class="active"' if session[:level]== :chuck %>><a href="/chuck_noris" tabIndex="-1">Chuck Noris</a></li>
+        <% if session[:level] == :answers %>
+          <li class="dropdown active">
+        <% else %>
+          <li class="dropdown">
+        <% end %>
+         <a class="dropdown-toggle"
+            data-toggle="dropdown"
+            href="#">
+             Answers
+             <b class="caret"></b>
+           </a>
+          <ul class="dropdown-menu">
+            <% RESOURCES.each do |k,v| %>
+              <li><a href="/answers?resource=<%= k.to_s %>"><%= k.to_s.capitalize %></a></li>
+            <% end %>
+         </ul>
+       </li>
+      </ul>
+    </div>
+    <div>
+      <%= yield %>
+    </div>
   </div>
 </body>
 

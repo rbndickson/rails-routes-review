@@ -1,28 +1,27 @@
 require 'sinatra'
 require 'json'
+require 'pry'
 
 use Rack::Session::Cookie, :key => 'rack.session',
                            :path => '/',
                            :secret => 'hbjQUnA4zaksWyjrx86y'
 
+RESOURCES = {
+  photos: {singular: "photo", plural: "photos"},
+  videos: {singular: "video", plural: "videos"},
+  books: {singular: "book", plural: "books"},
+  articles: {singular: "article", plural: "articles"},
+  posts: {singular: "post", plural: "posts"},
+  users: {singular: "user", plural: "users"}
+}
+
 helpers do
 
-  def resources
-    resources =
-      [{singular: "photo", plural: "photos"},
-       {singular: "video", plural: "videos"},
-       {singular: "book", plural: "books"},
-       {singular: "article", plural: "articles"},
-       {singular: "post", plural: "posts"},
-       {singular: "user", plural: "users"}]
-  end
-
   def choose_resource
-    resources[rand(6)]
+    RESOURCES.to_a.sample(1)[0][1]
   end
 
   def make_route_data_hash(resource)
-
     data_hash = {
       index: {
         http_verb: "GET",
@@ -144,6 +143,14 @@ end
 
 get '/chuck_noris' do
   set_session({ level: :chuck, blanks: 27 })
+  erb :quiz
+end
+
+get '/answers' do
+  resource_lookup = params['resource']
+  resource = RESOURCES[resource_lookup.to_sym]
+  session[:display_data] = make_route_data_hash(resource)
+  session[:level] = :answers
   erb :quiz
 end
 
