@@ -17,7 +17,11 @@
 
           <td id=<%= "#{route}#{col_title}_cell" %>>
             <form class="form-inline" id="check_answer" action="/check_answer" method="post">
-              <input class="input-small" id=<%= "#{route}/#{col_title}" %> type="text" name="user_answer" autofocus></input>
+              <% if col_title == :used_for %>
+                <input class="input-xlarge" id=<%= "#{route}/#{col_title}" %> type="text" name="user_answer" autofocus></input>
+              <% else %>
+                <input class="input-small" id=<%= "#{route}/#{col_title}" %> type="text" name="user_answer" autofocus></input>
+              <% end %>
             </form>
             <button type="submit" id="show_answer_button" class="btn btn-small btn-warning" tabIndex="-1" value=<%= "#{route}/#{col_title}" %>>reveal</button>
           </td>
