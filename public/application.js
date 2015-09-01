@@ -25,11 +25,11 @@ $(function(){
             $(msg.cell_id).replaceWith(msg.html);
             if (msg.questions_completed == msg.total_questions) {
               if (msg.correct_amount == msg.total_questions) {
-                $('thead').addClass("success", 1000, "easeInBounce" );
-                $('tbody').addClass("success", 1000, "easeInBounce" );
+                $('td.success').effect("pulsate", {times: 1}, 1500);
                 $('#quiz').css( "margin", "0px" );
                 $('#quiz').prepend('<div class="alert alert-success">Well Done! You scored full marks - ' +
-                  msg.correct_amount + ' out of ' + msg.total_questions + '.</div>');
+                  msg.correct_amount + ' out of ' + msg.total_questions +
+                  '. Maybe time to try the next level!</div>');
               }
               else {
                 $('#quiz').css( "margin", "0px" );
