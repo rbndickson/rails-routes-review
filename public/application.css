@@ -64,13 +64,3 @@ td.error {
   background-color: red;
   border-color: red;
 }
-
-thead.success {
-  color: #3c763d;
-  background-color: #d0e9c6;
-  border-color: #d0e9c6;
-}
-
-table.success {
-  border-color: #d0e9c6;
-}
