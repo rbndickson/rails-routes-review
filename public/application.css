@@ -15,6 +15,24 @@ table {
   margin-top: 58px;
 }
 
+#footer {
+  margin-top: 25px;
+}
+
+.muted {
+  color: #C8C8C8;
+}
+
+.muted a {
+  color: #C8C8C8;
+  text-decoration: underline;
+}
+
+.muted a:hover {
+  color: #08C;
+  text-decoration: underline;
+}
+
 div.alert {
   margin-bottom: 10px;
 }
