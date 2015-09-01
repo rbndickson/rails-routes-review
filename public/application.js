@@ -7,7 +7,8 @@ $(function(){
             if (msg.questions_completed == msg.total_questions) {
               $('#quiz').css( "margin", "0px" );
               $('#quiz').prepend('<div class="alert alert-info">You have finished! You scored ' +
-                msg.correct_amount + ' out of ' + msg.total_questions + '.</div>');
+                msg.correct_amount + ' out of ' + msg.total_questions +
+                '. Choose level for a new game.</div>');
             }
             else {
               $('form:first *:input[type!=hidden]:first').focus();

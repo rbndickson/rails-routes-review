@@ -8,8 +8,6 @@ use Rack::Session::Cookie, :key => 'rack.session',
 RESOURCES = {
   photos: {singular: "photo", plural: "photos"},
   videos: {singular: "video", plural: "videos"},
-  books: {singular: "book", plural: "books"},
-  articles: {singular: "article", plural: "articles"},
   posts: {singular: "post", plural: "posts"},
   users: {singular: "user", plural: "users"}
 }
@@ -54,7 +52,7 @@ helpers do
         http_verb: "GET",
         path: "/#{resource[:plural]}/:id/edit",
         controller_action: "#{resource[:plural]}#edit",
-        used_for: "return an HTML form for editing an #{resource[:singular]}"
+        used_for: "return an HTML form for editing a #{resource[:singular]}"
       },
 
       update: {
