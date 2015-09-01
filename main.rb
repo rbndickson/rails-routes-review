@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'json'
-require 'pry'
 
 use Rack::Session::Cookie, :key => 'rack.session',
                            :path => '/',
@@ -55,7 +54,7 @@ helpers do
         http_verb: "GET",
         path: "/#{resource[:plural]}/:id/edit",
         controller_action: "#{resource[:plural]}#edit",
-        used_for: "return an HTML form for editing a #{resource[:singular]}"
+        used_for: "return an HTML form for editing an #{resource[:singular]}"
       },
 
       update: {
@@ -114,6 +113,9 @@ helpers do
 
   def set_session(args)
     session[:level] = args[:level]
+    session[:correct] = 0
+    session[:pass] = 0
+    session[:blanks] = args[:blanks]
     resource = choose_resource
     session[:display_data] = make_route_data_hash(resource)
     session[:answer_data] = make_route_data_hash(resource)
@@ -159,19 +161,39 @@ post '/check_answer' do
   cell_id = create_cell_id(answer_lookup)
   correct_answer = lookup_correct_answer(answer_lookup)
   if params['user_answer'] == correct_answer
+    session[:correct] += 1
     html = '<td class="success">' + correct_answer + '</td>'
-    msg = {:correct => true, "cell_id" => cell_id, "html" => html}
+    msg = {
+      :correct => true,
+      :cell_id => cell_id,
+      :html => html,
+      :pass_amount => session[:pass],
+      :correct_amount => session[:correct],
+      :questions_completed => session[:pass] + session[:correct],
+      :total_questions => session[:blanks]
+    }
   else
-    msg = {:correct => false, "cell_id" => cell_id}
+    msg = {
+      :correct => false,
+      :cell_id => cell_id
+    }
   end
   msg.to_json
 end
 
 post '/show_answer' do
+  session[:pass] += 1
   answer_lookup = params[:value]
   cell_id = create_cell_id(answer_lookup)
   correct_answer = lookup_correct_answer(answer_lookup)
   html = '<td class="pass">' + correct_answer + '</td>'
-  msg = {"cell_id" => cell_id, "html" => html}
+  msg = {
+    :cell_id => cell_id,
+    :html => html,
+    :pass_amount => session[:pass],
+    :correct_amount => session[:correct],
+    :questions_completed => session[:pass] + session[:correct],
+    :total_questions => session[:blanks]
+  }
   msg.to_json
 end

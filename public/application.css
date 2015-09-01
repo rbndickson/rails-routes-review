@@ -11,6 +11,18 @@ table {
   table-layout: fixed;
 }
 
+#quiz {
+  margin-top: 58px;
+}
+
+div.alert {
+  margin-bottom: 10px;
+}
+
+.nav {
+  margin-bottom: 10px;
+}
+
 .table td {
   vertical-align: middle;
   line-height: 32px;
@@ -33,4 +45,14 @@ td.error {
   color: red;
   background-color: red;
   border-color: red;
+}
+
+thead.success {
+  color: #3c763d;
+  background-color: #d0e9c6;
+  border-color: #d0e9c6;
+}
+
+tbody.success {
+  border-color: #3c763d;
 }
