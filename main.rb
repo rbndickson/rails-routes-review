@@ -82,20 +82,20 @@ helpers do
   end
 
   def routes
-    session[:answer_data].keys
+    [:index, :new, :create, :show, :edit, :update, :destroy]
   end
 
-  def col_title_lookups
-    session[:answer_data][:index].keys
+  def column_titles
+    [:http_verb, :path, :controller_action, :used_for]
   end
 
-  def cells
-    routes.product(col_title_lookups)
+  def table_cells
+    routes.product(column_titles)
   end
 
   def create_blank_cells(args)
-    to_erase = cells.shuffle![0..(args[:blanks]-1)]
-    to_erase.each do |item|
+    cells_to_erase = table_cells.shuffle![0..(args[:blanks]-1)]
+    cells_to_erase.each do |item|
       session[:display_data][item[0]][item[1]] = ""
     end
   end
