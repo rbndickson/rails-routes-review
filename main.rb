@@ -3,7 +3,7 @@ require 'json'
 
 use Rack::Session::Cookie, :key => 'rack.session',
                            :path => '/',
-                           :secret => 'hbjQUnA4zaksWyjrx86y'
+                           :secret => ENV['SESSION_SECRET']
 
 RESOURCES = {
   photos: {singular: "photo", plural: "photos"},
