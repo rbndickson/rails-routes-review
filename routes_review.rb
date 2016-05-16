@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'json'
-
+require "pry"
 secret = ENV['RACK_ENV'] == 'test' ? 'somesecret' : ENV['SESSION_SECRET']
 
 use Rack::Session::Cookie, key: 'rack.session',
@@ -101,12 +101,12 @@ helpers do
   end
 
   def lookup_correct_answer(input)
-    route, col = input.split('/')
+    route, col = input.split('_', 2)
     session[:answer_data][route.to_sym][col.to_sym]
   end
 
   def create_cell_id(input)
-    '#' + input.delete('/') + '_cell'
+    '#' + input + '_cell'
   end
 
   def create_session(args)
