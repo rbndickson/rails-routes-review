@@ -1,83 +1,81 @@
 require 'sinatra'
 require 'json'
 
-use Rack::Session::Cookie, :key => 'rack.session',
-                           :path => '/',
-                           :secret => ENV['SESSION_SECRET']
+use Rack::Session::Cookie, key: 'rack.session',
+                           path: '/',
+                           secret: ENV['SESSION_SECRET']
 
 RESOURCES = {
-  photos: {singular: "photo", plural: "photos"},
-  videos: {singular: "video", plural: "videos"},
-  posts: {singular: "post", plural: "posts"},
-  users: {singular: "user", plural: "users"}
+  photos: { singular: 'photo', plural: 'photos' },
+  videos: { singular: 'video', plural: 'videos' },
+  posts: { singular: 'post', plural: 'posts' },
+  users: { singular: 'user', plural: 'users' }
 }
 
 helpers do
-
   def choose_resource
     RESOURCES.to_a.sample(1)[0][1]
   end
 
   def make_route_data_hash(resource)
-    data_hash = {
+    {
       index: {
-        http_verb: "GET",
+        http_verb: 'GET',
         path: "/#{resource[:plural]}",
         controller_action: "#{resource[:plural]}#index",
         used_for: "display a list of all #{resource[:plural]}"
       },
 
       new: {
-        http_verb: "GET",
+        http_verb: 'GET',
         path: "/#{resource[:plural]}/new",
         controller_action: "#{resource[:plural]}#new",
         used_for: "return an HTML form for creating a new #{resource[:singular]}"
       },
 
       create: {
-        http_verb: "POST",
+        http_verb: 'POST',
         path: "/#{resource[:plural]}",
         controller_action: "#{resource[:plural]}#create",
         used_for: "create a new #{resource[:singular]}"
       },
 
       show: {
-        http_verb: "GET",
+        http_verb: 'GET',
         path: "/#{resource[:plural]}/:id",
         controller_action: "#{resource[:plural]}#show",
         used_for: "display a specific #{resource[:singular]}"
       },
 
       edit: {
-        http_verb: "GET",
+        http_verb: 'GET',
         path: "/#{resource[:plural]}/:id/edit",
         controller_action: "#{resource[:plural]}#edit",
         used_for: "return an HTML form for editing a #{resource[:singular]}"
       },
 
       update: {
-        http_verb: "PATCH/PUT",
+        http_verb: 'PATCH/PUT',
         path: "/#{resource[:plural]}/:id",
         controller_action: "#{resource[:plural]}#update",
         used_for: "update a specific #{resource[:singular]}"
       },
 
       destroy: {
-        http_verb: "DELETE",
+        http_verb: 'DELETE',
         path: "/#{resource[:plural]}/:id",
         controller_action: "#{resource[:plural]}#destroy",
         used_for: "delete a specific #{resource[:singular]}"
       }
     }
-
   end
 
   def title_row
-    title_row = {
-      title_0: "HTTP Verb",
-      title_1: "Path",
-      title_2: "Controller#Action",
-      title_3: "Used for"
+    {
+      title_0: 'HTTP Verb',
+      title_1: 'Path',
+      title_2: 'Controller#Action',
+      title_3: 'Used for'
     }
   end
 
@@ -94,9 +92,9 @@ helpers do
   end
 
   def create_blank_cells(args)
-    cells_to_erase = table_cells.shuffle![0..(args[:blanks]-1)]
+    cells_to_erase = table_cells.shuffle![0..(args[:blanks] - 1)]
     cells_to_erase.each do |item|
-      session[:display_data][item[0]][item[1]] = ""
+      session[:display_data][item[0]][item[1]] = ''
     end
   end
 
@@ -109,7 +107,7 @@ helpers do
     '#' + input.delete('/') + '_cell'
   end
 
-  def set_session(args)
+  def create_session(args)
     session[:level] = args[:level]
     session[:correct] = 0
     session[:pass] = 0
@@ -127,22 +125,22 @@ get '/' do
 end
 
 get '/normal' do
-  set_session({ level: :normal, blanks: 5 })
+  create_session(level: :normal, blanks: 5)
   erb :quiz
 end
 
 get '/hard' do
-  set_session({ level: :hard, blanks: 10 })
+  create_session(level: :hard, blanks: 10)
   erb :quiz
 end
 
 get '/extreme' do
-  set_session({ level: :extreme, blanks: 20 })
+  create_session(level: :extreme, blanks: 20)
   erb :quiz
 end
 
 get '/chuck_noris' do
-  set_session({ level: :chuck, blanks: 27 })
+  create_session(level: :chuck, blanks: 27)
   erb :quiz
 end
 
@@ -162,18 +160,18 @@ post '/check_answer' do
     session[:correct] += 1
     html = '<td class="success">' + correct_answer + '</td>'
     msg = {
-      :correct => true,
-      :cell_id => cell_id,
-      :html => html,
-      :pass_amount => session[:pass],
-      :correct_amount => session[:correct],
-      :questions_completed => session[:pass] + session[:correct],
-      :total_questions => session[:blanks]
+      correct: true,
+      cell_id: cell_id,
+      html: html,
+      pass_amount: session[:pass],
+      correct_amount: session[:correct],
+      questions_completed: session[:pass] + session[:correct],
+      total_questions: session[:blanks]
     }
   else
     msg = {
-      :correct => false,
-      :cell_id => cell_id
+      correct: false,
+      cell_id: cell_id
     }
   end
   msg.to_json
@@ -186,12 +184,12 @@ post '/show_answer' do
   correct_answer = lookup_correct_answer(answer_lookup)
   html = '<td class="pass">' + correct_answer + '</td>'
   msg = {
-    :cell_id => cell_id,
-    :html => html,
-    :pass_amount => session[:pass],
-    :correct_amount => session[:correct],
-    :questions_completed => session[:pass] + session[:correct],
-    :total_questions => session[:blanks]
+    cell_id: cell_id,
+    html: html,
+    pass_amount: session[:pass],
+    correct_amount: session[:correct],
+    questions_completed: session[:pass] + session[:correct],
+    total_questions: session[:blanks]
   }
   msg.to_json
 end
