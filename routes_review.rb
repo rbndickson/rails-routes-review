@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'json'
-require "pry"
 secret = ENV['RACK_ENV'] == 'test' ? 'somesecret' : ENV['SESSION_SECRET']
 
 use Rack::Session::Cookie, key: 'rack.session',
@@ -160,7 +159,7 @@ post '/check_answer' do
   correct_answer = lookup_correct_answer(answer_lookup)
   if params['user_answer'] == correct_answer
     session[:correct] += 1
-    html = '<td class="success">' + correct_answer + '</td>'
+    html = "<td class='success' id='#{cell_id[1..-1]}'>" + correct_answer + '</td>'
     msg = {
       correct: true,
       cell_id: cell_id,
@@ -184,7 +183,7 @@ post '/show_answer' do
   answer_lookup = params[:value]
   cell_id = create_cell_id(answer_lookup)
   correct_answer = lookup_correct_answer(answer_lookup)
-  html = '<td class="pass">' + correct_answer + '</td>'
+  html = "<td class='pass' id='#{cell_id[1..-1]}'>" + correct_answer + '</td>'
   msg = {
     cell_id: cell_id,
     html: html,
