@@ -1,9 +1,11 @@
 require 'sinatra'
 require 'json'
 
+secret = ENV['RACK_ENV'] == 'test' ? 'somesecret' : ENV['SESSION_SECRET']
+
 use Rack::Session::Cookie, key: 'rack.session',
                            path: '/',
-                           secret: ENV['SESSION_SECRET']
+                           secret: secret
 
 RESOURCES = {
   photos: { singular: 'photo', plural: 'photos' },
