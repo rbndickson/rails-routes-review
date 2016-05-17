@@ -32,8 +32,8 @@ describe 'choosing a different level' , :type => :feature do
     expect(page).to have_selector('input', count: 10)
   end
 
-  it 'shows 20 blanks for Extreme' do
-    click_link 'Extreme'
+  it 'shows 20 blanks for Expert' do
+    click_link 'Expert'
     expect(page).to have_selector('input', count: 20)
   end
 

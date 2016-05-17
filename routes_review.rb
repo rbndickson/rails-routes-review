@@ -109,6 +109,7 @@ helpers do
   end
 
   def create_session(args)
+    session.clear
     session[:level] = args[:level]
     session[:correct] = 0
     session[:pass] = 0
@@ -121,11 +122,6 @@ helpers do
 end
 
 get '/' do
-  session.clear
-  redirect '/normal'
-end
-
-get '/normal' do
   create_session(level: :normal, blanks: 5)
   erb :quiz
 end
@@ -135,8 +131,8 @@ get '/hard' do
   erb :quiz
 end
 
-get '/extreme' do
-  create_session(level: :extreme, blanks: 20)
+get '/expert' do
+  create_session(level: :expert, blanks: 20)
   erb :quiz
 end
 
