@@ -1,5 +1,4 @@
 <table class="table table-bordered">
-
   <thead>
     <tr>
       <th>HTTP Verb</th>
@@ -8,13 +7,12 @@
       <th class="span5">Used for</th>
     </tr>
   </thead>
-
   <tbody>
     <% session[:display_data].each do |route, column_title |  %>
       <tr>
         <% column_title.each do |column_title, cell_text| %>
-          <% if cell_text == '' %>
 
+          <% if cell_text.empty? %>
             <td id=<%= "#{route}_#{column_title}_cell" %>>
               <form class="form-inline" id="check_answer" action="/check_answer" method="post">
                 <% if column_title == :used_for %>
@@ -25,7 +23,6 @@
               </form>
               <button type="submit" id="show_answer_button" class="btn btn-small btn-warning" tabIndex="-1" value=<%= "#{route}_#{column_title}" %>>reveal</button>
             </td>
-
           <% else %>
             <td id=<%= "#{route}_#{column_title}" %>><%= cell_text %></td>
           <% end %>
@@ -34,5 +31,4 @@
       </tr>
     <% end %>
   </tbody>
-
 </table>

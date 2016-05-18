@@ -1,5 +1,18 @@
 body {
+  padding-top: 50px;
   font-size: 11pt;
+}
+
+nav {
+  margin-bottom: 10px;
+}
+
+main {
+  margin-top: 58px;
+}
+
+footer {
+  margin-top: 25px;
 }
 
 form {
@@ -9,14 +22,6 @@ form {
 
 table {
   table-layout: fixed;
-}
-
-#quiz {
-  margin-top: 58px;
-}
-
-#footer {
-  margin-top: 25px;
 }
 
 .muted {
@@ -34,10 +39,6 @@ table {
 }
 
 div.alert {
-  margin-bottom: 10px;
-}
-
-.nav {
   margin-bottom: 10px;
 }
 
