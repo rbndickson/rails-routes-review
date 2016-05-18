@@ -35,8 +35,8 @@
              <b class="caret"></b>
            </a>
           <ul class="dropdown-menu">
-            <% RESOURCES.each do |k,v| %>
-              <li><a href="/answers?resource=<%= k.to_s %>"><%= k.to_s.capitalize %></a></li>
+            <% RESOURCES.each do |resource| %>
+              <li><a href="/answers/<%= resource %>"><%= resource.capitalize + 's' %></a></li>
             <% end %>
          </ul>
        </li>

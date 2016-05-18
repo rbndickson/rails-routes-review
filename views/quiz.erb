@@ -2,10 +2,10 @@
 
   <thead>
     <tr>
-      <th><%= title_row[:title_0] %></th>
-      <th><%= title_row[:title_1] %></th>
-      <th><%= title_row[:title_2] %></th>
-      <th class="span5"><%= title_row[:title_3] %></th>
+      <th>HTTP Verb</th>
+      <th>Path</th>
+      <th>Controller#Action</th>
+      <th class="span5">Used for</th>
     </tr>
   </thead>
 
@@ -13,18 +13,18 @@
     <% session[:display_data].each do |route, col_title |  %>
       <tr>
         <% col_title.each do |col_title, cell_text| %>
-          <% if cell_text == "" %>
+          <% if cell_text == '' %>
 
-          <td id=<%= "#{route}_#{col_title}_cell" %>>
-            <form class="form-inline" id="check_answer" action="/check_answer" method="post">
-              <% if col_title == :used_for %>
-                <input class="input-xlarge" id=<%= "#{route}_#{col_title}" %> type="text" name="user_answer" autofocus></input>
-              <% else %>
-                <input class="input-small" id=<%= "#{route}_#{col_title}" %> type="text" name="user_answer" autofocus></input>
-              <% end %>
-            </form>
-            <button type="submit" id="show_answer_button" class="btn btn-small btn-warning" tabIndex="-1" value=<%= "#{route}_#{col_title}" %>>reveal</button>
-          </td>
+            <td id=<%= "#{route}_#{col_title}_cell" %>>
+              <form class="form-inline" id="check_answer" action="/check_answer" method="post">
+                <% if col_title == :used_for %>
+                  <input class="input-xlarge" id=<%= "#{route}_#{col_title}" %> type="text" name="user_answer" autofocus></input>
+                <% else %>
+                  <input class="input-small" id=<%= "#{route}_#{col_title}" %> type="text" name="user_answer" autofocus></input>
+                <% end %>
+              </form>
+              <button type="submit" id="show_answer_button" class="btn btn-small btn-warning" tabIndex="-1" value=<%= "#{route}_#{col_title}" %>>reveal</button>
+            </td>
 
           <% else %>
             <td id=<%= "#{route}_#{col_title}" %>><%= cell_text %></td>

@@ -1,105 +1,98 @@
 require 'sinatra'
 require 'json'
+
 secret = ENV['RACK_ENV'] == 'test' ? 'somesecret' : ENV['SESSION_SECRET']
 
 use Rack::Session::Cookie, key: 'rack.session',
                            path: '/',
                            secret: secret
 
-RESOURCES = {
-  photos: { singular: 'photo', plural: 'photos' },
-  videos: { singular: 'video', plural: 'videos' },
-  posts: { singular: 'post', plural: 'posts' },
-  users: { singular: 'user', plural: 'users' }
-}
+RESOURCES = ['photo', 'video', 'post', 'user']
 
 helpers do
-  def choose_resource
-    RESOURCES.to_a.sample(1)[0][1]
+  def random_resource
+    RESOURCES.sample
   end
 
-  def make_route_data_hash(resource)
+  def resource_data(resource)
     {
-      index: {
-        http_verb: 'GET',
-        path: "/#{resource[:plural]}",
-        controller_action: "#{resource[:plural]}#index",
-        used_for: "display a list of all #{resource[:plural]}"
-      },
-
-      new: {
-        http_verb: 'GET',
-        path: "/#{resource[:plural]}/new",
-        controller_action: "#{resource[:plural]}#new",
-        used_for: "return an HTML form for creating a new #{resource[:singular]}"
-      },
-
-      create: {
-        http_verb: 'POST',
-        path: "/#{resource[:plural]}",
-        controller_action: "#{resource[:plural]}#create",
-        used_for: "create a new #{resource[:singular]}"
-      },
-
-      show: {
-        http_verb: 'GET',
-        path: "/#{resource[:plural]}/:id",
-        controller_action: "#{resource[:plural]}#show",
-        used_for: "display a specific #{resource[:singular]}"
-      },
-
-      edit: {
-        http_verb: 'GET',
-        path: "/#{resource[:plural]}/:id/edit",
-        controller_action: "#{resource[:plural]}#edit",
-        used_for: "return an HTML form for editing a #{resource[:singular]}"
-      },
-
-      update: {
-        http_verb: 'PATCH/PUT',
-        path: "/#{resource[:plural]}/:id",
-        controller_action: "#{resource[:plural]}#update",
-        used_for: "update a specific #{resource[:singular]}"
-      },
-
-      destroy: {
-        http_verb: 'DELETE',
-        path: "/#{resource[:plural]}/:id",
-        controller_action: "#{resource[:plural]}#destroy",
-        used_for: "delete a specific #{resource[:singular]}"
-      }
+      index: route_data(:index_data, resource),
+      new: route_data(:new_data, resource),
+      create: route_data(:create_data, resource),
+      show: route_data(:show_data, resource),
+      edit: route_data(:edit_data, resource),
+      update: route_data(:update_data, resource),
+      destroy: route_data(:destroy_data, resource)
     }
   end
 
-  def title_row
+  def route_data(route, resource)
+    data = send(route, resource)
     {
-      title_0: 'HTTP Verb',
-      title_1: 'Path',
-      title_2: 'Controller#Action',
-      title_3: 'Used for'
+      http_verb: data[0],
+      path: data[1],
+      controller_action: data[2],
+      used_for: data[3],
     }
   end
 
-  def routes
-    [:index, :new, :create, :show, :edit, :update, :destroy]
+  def index_data(resource)
+    ['GET', "/#{pluralize(resource)}", "#{pluralize(resource)}#index",
+      "display a list of all #{pluralize(resource)}"]
   end
 
-  def column_titles
-    [:http_verb, :path, :controller_action, :used_for]
+  def new_data(resource)
+    ['GET', "/#{pluralize(resource)}/new", "#{pluralize(resource)}#new",
+      "return an HTML form for creating a new #{resource}"]
+  end
+
+  def create_data(resource)
+    ['POST', "/#{pluralize(resource)}", "#{pluralize(resource)}#create",
+      "create a new #{resource}"]
+  end
+
+  def show_data(resource)
+    ['GET', "/#{pluralize(resource)}/:id", "#{pluralize(resource)}#show",
+      "display a specific #{resource}"]
+  end
+
+  def edit_data(resource)
+    ['GET', "/#{pluralize(resource)}/:id/edit", "#{pluralize(resource)}#edit",
+      "return an HTML form for editing a #{resource}"]
+  end
+
+  def update_data(resource)
+    ['PATCH/PUT', "/#{pluralize(resource)}/:id", "#{pluralize(resource)}#update",
+      "update a specific #{resource}"]
+  end
+
+  def destroy_data(resource)
+    ['DELETE', "/#{pluralize(resource)}/:id", "#{pluralize(resource)}#destroy", "delete a specific #{resource}"]
+  end
+
+  def pluralize(input)
+    input + 's'
   end
 
   def table_cells
+    column_titles = [:http_verb, :path, :controller_action, :used_for]
+    routes = [:index, :new, :create, :show, :edit, :update, :destroy]
     routes.product(column_titles)
   end
 
-  def create_blank_cells(args)
-    cells_to_erase = table_cells.shuffle![0..(args[:blanks] - 1)]
-    cells_to_erase.each do |item|
-      session[:display_data][item[0]][item[1]] = ''
+  LEVEL_TO_BLANKS = { normal: 5, hard: 10, expert: 20, chuck: 27 }
+
+  def display_data(resource)
+    number_of_blanks = LEVEL_TO_BLANKS[session[:level]]
+    cells_to_erase = table_cells.sample(number_of_blanks)
+    data = resource_data(resource)
+
+    cells_to_erase.each_with_object(data) do |(route, col), data|
+      data[route][col] = ''
     end
   end
 
-  def lookup_correct_answer(input)
+  def correct_answer(input)
     route, col = input.split('_', 2)
     session[:answer_data][route.to_sym][col.to_sym]
   end
@@ -108,85 +101,76 @@ helpers do
     '#' + input + '_cell'
   end
 
-  def create_session(args)
+  def create_session(level)
     session.clear
-    session[:level] = args[:level]
+    session[:level] = level
     session[:correct] = 0
     session[:pass] = 0
-    session[:blanks] = args[:blanks]
-    resource = choose_resource
-    session[:display_data] = make_route_data_hash(resource)
-    session[:answer_data] = make_route_data_hash(resource)
-    create_blank_cells(args)
+    resource = random_resource
+    session[:answer_data] = resource_data(resource)
+    session[:display_data] = display_data(resource)
   end
 end
 
 get '/' do
-  create_session(level: :normal, blanks: 5)
+  create_session(:normal)
   erb :quiz
 end
 
 get '/hard' do
-  create_session(level: :hard, blanks: 10)
+  create_session(:hard)
   erb :quiz
 end
 
 get '/expert' do
-  create_session(level: :expert, blanks: 20)
+  create_session(:expert)
   erb :quiz
 end
 
 get '/chuck_noris' do
-  create_session(level: :chuck, blanks: 27)
+  create_session(:chuck)
   erb :quiz
 end
 
-get '/answers' do
-  resource_lookup = params['resource']
-  resource = RESOURCES[resource_lookup.to_sym]
-  session[:display_data] = make_route_data_hash(resource)
+get '/answers/:resource' do
+  session[:display_data] = resource_data(params['resource'])
   session[:level] = :answers
   erb :quiz
 end
 
-post '/check_answer' do
-  answer_lookup = params['answer_lookup']
-  cell_id = create_cell_id(answer_lookup)
-  correct_answer = lookup_correct_answer(answer_lookup)
-  if params['user_answer'] == correct_answer
-    session[:correct] += 1
-    html = "<td class='success' id='#{cell_id[1..-1]}'>" + correct_answer + '</td>'
-    msg = {
-      correct: true,
-      cell_id: cell_id,
-      html: html,
-      pass_amount: session[:pass],
-      correct_amount: session[:correct],
-      questions_completed: session[:pass] + session[:correct],
-      total_questions: session[:blanks]
-    }
-  else
-    msg = {
-      correct: false,
-      cell_id: cell_id
-    }
-  end
-  msg.to_json
-end
-
-post '/show_answer' do
-  session[:pass] += 1
-  answer_lookup = params[:value]
-  cell_id = create_cell_id(answer_lookup)
-  correct_answer = lookup_correct_answer(answer_lookup)
-  html = "<td class='pass' id='#{cell_id[1..-1]}'>" + correct_answer + '</td>'
-  msg = {
+def message(cell_id, html)
+  {
     cell_id: cell_id,
     html: html,
     pass_amount: session[:pass],
     correct_amount: session[:correct],
     questions_completed: session[:pass] + session[:correct],
-    total_questions: session[:blanks]
+    total_questions: LEVEL_TO_BLANKS[session[:level]]
   }
+end
+
+post '/check_answer' do
+  question = params['question']
+  cell_id = create_cell_id(question)
+  correct_answer = correct_answer(question)
+
+  if params['user_answer'] == correct_answer
+    session[:correct] += 1
+    html = "<td class='success' id='#{cell_id[1..-1]}'>" + correct_answer + '</td>'
+    msg = message(cell_id, html).merge!(correct: true)
+  else
+    msg = { correct: false, cell_id: cell_id }
+  end
+
+  msg.to_json
+end
+
+post '/show_answer' do
+  session[:pass] += 1
+  question = params[:value]
+  cell_id = create_cell_id(question)
+  correct_answer = correct_answer(question)
+  html = "<td class='pass' id='#{cell_id[1..-1]}'>" + correct_answer + '</td>'
+  msg = message(cell_id, html)
   msg.to_json
 end

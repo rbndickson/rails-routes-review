@@ -19,7 +19,7 @@ $(function(){
 
     $('input[type=text]').keypress(function (e) {
       if (e.which == 13) {
-        $.post('check_answer', {user_answer:$(this).val(), answer_lookup: this.id}, function(msg){
+        $.post('check_answer', {user_answer:$(this).val(), question: this.id}, function(msg){
           var msg = JSON.parse(msg);
           if (msg.correct == true) {
             $(msg.cell_id).replaceWith(msg.html);
