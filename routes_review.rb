@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'json'
+require 'sinatra/reloader' if development?
 
 secret = ENV['RACK_ENV'] == 'test' ? 'somesecret' : ENV['SESSION_SECRET']
 
