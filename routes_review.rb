@@ -7,7 +7,7 @@ use Rack::Session::Cookie, key: 'rack.session',
                            path: '/',
                            secret: secret
 
-RESOURCES = ['photo', 'video', 'post', 'user']
+RESOURCES = %w(photo video post user)
 
 helpers do
   def random_resource
@@ -32,42 +32,43 @@ helpers do
       http_verb: data[0],
       path: data[1],
       controller_action: data[2],
-      used_for: data[3],
+      used_for: data[3]
     }
   end
 
   def index_data(resource)
     ['GET', "/#{pluralize(resource)}", "#{pluralize(resource)}#index",
-      "display a list of all #{pluralize(resource)}"]
+     "display a list of all #{pluralize(resource)}"]
   end
 
   def new_data(resource)
     ['GET', "/#{pluralize(resource)}/new", "#{pluralize(resource)}#new",
-      "return an HTML form for creating a new #{resource}"]
+     "return an HTML form for creating a new #{resource}"]
   end
 
   def create_data(resource)
     ['POST', "/#{pluralize(resource)}", "#{pluralize(resource)}#create",
-      "create a new #{resource}"]
+     "create a new #{resource}"]
   end
 
   def show_data(resource)
     ['GET', "/#{pluralize(resource)}/:id", "#{pluralize(resource)}#show",
-      "display a specific #{resource}"]
+     "display a specific #{resource}"]
   end
 
   def edit_data(resource)
     ['GET', "/#{pluralize(resource)}/:id/edit", "#{pluralize(resource)}#edit",
-      "return an HTML form for editing a #{resource}"]
+     "return an HTML form for editing a #{resource}"]
   end
 
   def update_data(resource)
     ['PATCH/PUT', "/#{pluralize(resource)}/:id", "#{pluralize(resource)}#update",
-      "update a specific #{resource}"]
+     "update a specific #{resource}"]
   end
 
   def destroy_data(resource)
-    ['DELETE', "/#{pluralize(resource)}/:id", "#{pluralize(resource)}#destroy", "delete a specific #{resource}"]
+    ['DELETE', "/#{pluralize(resource)}/:id", "#{pluralize(resource)}#destroy",
+     "delete a specific #{resource}"]
   end
 
   def pluralize(input)
@@ -80,15 +81,14 @@ helpers do
     routes.product(column_titles)
   end
 
-  LEVEL_TO_BLANKS = { normal: 5, hard: 10, expert: 20, chuck: 27 }
+  LEVEL_TO_BLANKS = { normal: 5, hard: 10, expert: 20, chuck_noris: 27 }
 
   def display_data(resource)
-    number_of_blanks = LEVEL_TO_BLANKS[session[:level]]
-    cells_to_erase = table_cells.sample(number_of_blanks)
+    cells_to_erase = table_cells.sample(blanks)
     data = resource_data(resource)
 
-    cells_to_erase.each_with_object(data) do |(route, col), data|
-      data[route][col] = ''
+    cells_to_erase.each_with_object(data) do |(route, col), obj|
+      obj[route][col] = ''
     end
   end
 
@@ -101,52 +101,44 @@ helpers do
     '#' + input + '_cell'
   end
 
-  def create_session(level)
+  def create_session
     session.clear
-    session[:level] = level
+    session[:blanks] = blanks
     session[:correct] = 0
     session[:pass] = 0
     resource = random_resource
     session[:answer_data] = resource_data(resource)
     session[:display_data] = display_data(resource)
   end
+
+  def blanks
+    LEVEL_TO_BLANKS[params['level'].to_sym]
+  end
+
+  def message(cell_id, html)
+    {
+      cell_id: cell_id,
+      html: html,
+      pass_amount: session[:pass],
+      correct_amount: session[:correct],
+      questions_completed: session[:pass] + session[:correct],
+      total_questions: session[:blanks]
+    }
+  end
 end
 
 get '/' do
-  create_session(:normal)
-  erb :quiz
+  redirect '/quiz/normal'
 end
 
-get '/hard' do
-  create_session(:hard)
-  erb :quiz
-end
-
-get '/expert' do
-  create_session(:expert)
-  erb :quiz
-end
-
-get '/chuck_noris' do
-  create_session(:chuck)
+get '/quiz/:level' do
+  create_session
   erb :quiz
 end
 
 get '/answers/:resource' do
   session[:display_data] = resource_data(params['resource'])
-  session[:level] = :answers
   erb :quiz
-end
-
-def message(cell_id, html)
-  {
-    cell_id: cell_id,
-    html: html,
-    pass_amount: session[:pass],
-    correct_amount: session[:correct],
-    questions_completed: session[:pass] + session[:correct],
-    total_questions: LEVEL_TO_BLANKS[session[:level]]
-  }
 end
 
 post '/check_answer' do

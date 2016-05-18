@@ -22,7 +22,7 @@ describe 'loading the site', :type => :feature do
   end
 end
 
-describe 'choosing a different level' , :type => :feature do
+describe 'choosing a different level', :type => :feature do
   before do
     visit '/'
   end
@@ -43,9 +43,9 @@ describe 'choosing a different level' , :type => :feature do
   end
 end
 
-describe 'after entering a correct answer' , :type => :feature do
+describe 'after entering a correct answer', :type => :feature do
   before do
-    visit '/chuck_noris'
+    visit '/quiz/chuck_noris'
   end
 
   it 'shows the answer' do
@@ -75,9 +75,9 @@ describe 'after entering a correct answer' , :type => :feature do
   end
 end
 
-describe 'after entering an incorrect answer' , :type => :feature do
+describe 'after entering an incorrect answer', :type => :feature do
   before do
-    visit '/chuck_noris'
+    visit '/quiz/chuck_noris'
   end
 
   it 'does not show the answer' do
@@ -107,7 +107,7 @@ describe 'after entering an incorrect answer' , :type => :feature do
   end
 end
 
-describe 'viewing the answers' , :type => :feature do
+describe 'viewing the answers', :type => :feature do
   before do
     visit '/'
   end

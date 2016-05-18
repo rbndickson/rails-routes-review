@@ -1,7 +1,7 @@
 $(function(){
 
     $('button[type=submit]').click(function(){
-        $.post('show_answer', {value:$(this).val()}, function(msg){
+        $.post('/show_answer', {value:$(this).val()}, function(msg){
             var msg = JSON.parse(msg);
             $(msg.cell_id).replaceWith(msg.html);
             if (msg.questions_completed == msg.total_questions) {
@@ -19,7 +19,7 @@ $(function(){
 
     $('input[type=text]').keypress(function (e) {
       if (e.which == 13) {
-        $.post('check_answer', {user_answer:$(this).val(), question: this.id}, function(msg){
+        $.post('/check_answer', {user_answer:$(this).val(), question: this.id}, function(msg){
           var msg = JSON.parse(msg);
           if (msg.correct == true) {
             $(msg.cell_id).replaceWith(msg.html);
