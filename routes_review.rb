@@ -9,6 +9,9 @@ use Rack::Session::Cookie, key: 'rack.session',
                            secret: secret
 
 RESOURCES = %w(photo video post user)
+COLUMN_TITLES = %w(http_verb path controller_action used_for)
+ROUTE_NAMES = %w(index new create show edit update destroy)
+LEVEL_TO_BLANKS = { normal: 5, hard: 10, expert: 20, chuck_noris: 27 }
 
 helpers do
   def random_resource
@@ -16,25 +19,17 @@ helpers do
   end
 
   def resource_data(resource)
-    {
-      index: route_data(:index_data, resource),
-      new: route_data(:new_data, resource),
-      create: route_data(:create_data, resource),
-      show: route_data(:show_data, resource),
-      edit: route_data(:edit_data, resource),
-      update: route_data(:update_data, resource),
-      destroy: route_data(:destroy_data, resource)
-    }
+    ROUTE_NAMES.each_with_object({}) do |route, obj|
+      method = route + '_data'
+      obj[route] = route_data(method, resource)
+    end
   end
 
   def route_data(route, resource)
     data = send(route, resource)
-    {
-      http_verb: data[0],
-      path: data[1],
-      controller_action: data[2],
-      used_for: data[3]
-    }
+    COLUMN_TITLES.each_with_object({}).with_index do |(column_title, obj), i|
+      obj[column_title] = data[i]
+    end
   end
 
   def index_data(resource)
@@ -77,25 +72,21 @@ helpers do
   end
 
   def table_cells
-    column_titles = [:http_verb, :path, :controller_action, :used_for]
-    routes = [:index, :new, :create, :show, :edit, :update, :destroy]
-    routes.product(column_titles)
+    ROUTE_NAMES.product(COLUMN_TITLES)
   end
-
-  LEVEL_TO_BLANKS = { normal: 5, hard: 10, expert: 20, chuck_noris: 27 }
 
   def display_data(resource)
     cells_to_erase = table_cells.sample(blanks)
     data = resource_data(resource)
 
-    cells_to_erase.each_with_object(data) do |(route, col), obj|
-      obj[route][col] = ''
+    cells_to_erase.each_with_object(data) do |(route, column), obj|
+      obj[route][column] = ''
     end
   end
 
   def correct_answer(input)
-    route, col = input.split('_', 2)
-    session[:answer_data][route.to_sym][col.to_sym]
+    route, column = input.split('_', 2)
+    session[:answer_data][route][column]
   end
 
   def create_cell_id(input)

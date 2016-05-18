@@ -10,24 +10,24 @@
   </thead>
 
   <tbody>
-    <% session[:display_data].each do |route, col_title |  %>
+    <% session[:display_data].each do |route, column_title |  %>
       <tr>
-        <% col_title.each do |col_title, cell_text| %>
+        <% column_title.each do |column_title, cell_text| %>
           <% if cell_text == '' %>
 
-            <td id=<%= "#{route}_#{col_title}_cell" %>>
+            <td id=<%= "#{route}_#{column_title}_cell" %>>
               <form class="form-inline" id="check_answer" action="/check_answer" method="post">
-                <% if col_title == :used_for %>
-                  <input class="input-xlarge" id=<%= "#{route}_#{col_title}" %> type="text" name="user_answer" autofocus></input>
+                <% if column_title == :used_for %>
+                  <input class="input-xlarge" id=<%= "#{route}_#{column_title}" %> type="text" name="user_answer" autofocus></input>
                 <% else %>
-                  <input class="input-small" id=<%= "#{route}_#{col_title}" %> type="text" name="user_answer" autofocus></input>
+                  <input class="input-small" id=<%= "#{route}_#{column_title}" %> type="text" name="user_answer" autofocus></input>
                 <% end %>
               </form>
-              <button type="submit" id="show_answer_button" class="btn btn-small btn-warning" tabIndex="-1" value=<%= "#{route}_#{col_title}" %>>reveal</button>
+              <button type="submit" id="show_answer_button" class="btn btn-small btn-warning" tabIndex="-1" value=<%= "#{route}_#{column_title}" %>>reveal</button>
             </td>
 
           <% else %>
-            <td id=<%= "#{route}_#{col_title}" %>><%= cell_text %></td>
+            <td id=<%= "#{route}_#{column_title}" %>><%= cell_text %></td>
           <% end %>
 
         <% end %>
