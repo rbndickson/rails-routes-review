@@ -38,14 +38,14 @@ describe 'choosing a different level', :type => :feature do
   end
 
   it 'shows 27 blanks for Chuck Norris' do
-    click_link 'Chuck Noris'
+    click_link 'Chuck norris'
     expect(page).to have_selector('input', count: 27)
   end
 end
 
 describe 'after entering a correct answer', :type => :feature do
   before do
-    visit '/quiz/chuck_noris'
+    visit '/quiz/chuck_norris'
   end
 
   it 'shows the answer' do
@@ -77,7 +77,7 @@ end
 
 describe 'after entering an incorrect answer', :type => :feature do
   before do
-    visit '/quiz/chuck_noris'
+    visit '/quiz/chuck_norris'
   end
 
   it 'does not show the answer' do
