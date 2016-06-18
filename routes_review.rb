@@ -11,7 +11,7 @@ use Rack::Session::Cookie, key: 'rack.session',
 RESOURCES = %w(photo video post user)
 COLUMN_TITLES = %w(http_verb path controller_action used_for)
 ROUTE_NAMES = %w(index new create show edit update destroy)
-LEVEL_TO_BLANKS = { normal: 5, hard: 10, expert: 20, chuck_noris: 27 }
+LEVEL_TO_BLANKS = { normal: 5, hard: 10, expert: 20, chuck_norris: 27 }
 
 helpers do
   def random_resource
