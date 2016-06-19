@@ -18,36 +18,47 @@
       </header>
       <nav>
         <ul class="nav nav-pills">
-          <li<%=' class="active"' if params[:level]== 'normal' %> ><a href="/quiz/normal" tabIndex="-1">Normal</a></li>
-          <li<%=' class="active"' if params[:level]== 'hard' %>><a href="/quiz/hard" tabIndex="-1">Hard</a></li>
-          <li<%=' class="active"' if params[:level]== 'expert' %>><a href="/quiz/expert" tabIndex="-1">Expert</a></li>
-          <li<%=' class="active"' if params[:level]== 'chuck_norris' %>><a href="/quiz/chuck_norris" tabIndex="-1">Chuck Norris</a></li>
+          <li<%=' class="active"' if params[:level]== 'normal' %> >
+            <a href="/quiz/normal" tabIndex="-1">Normal</a>
+          </li>
+          <li<%=' class="active"' if params[:level]== 'hard' %>>
+            <a href="/quiz/hard" tabIndex="-1">Hard</a>
+          </li>
+          <li<%=' class="active"' if params[:level]== 'expert' %>>
+            <a href="/quiz/expert" tabIndex="-1">Expert</a>
+          </li>
+          <li<%=' class="active"' if params[:level]== 'chuck_norris' %>>
+            <a href="/quiz/chuck_norris" tabIndex="-1">Chuck Norris</a>
+          </li>
           <% if params[:resource] == :answer %>
             <li class="dropdown active">
           <% else %>
             <li class="dropdown">
           <% end %>
-           <a class="dropdown-toggle"
-              data-toggle="dropdown"
-              href="#"
-              tabIndex="-1">
-               Answers
-               <b class="caret"></b>
-             </a>
+            <a class="dropdown-toggle"
+               data-toggle="dropdown"
+               href="#"
+               tabIndex="-1">
+              Answers
+              <b class="caret"></b>
+            </a>
             <ul class="dropdown-menu">
               <% RESOURCES.each do |resource| %>
                 <li><a href="/answers/<%= resource %>"><%= resource.capitalize + 's' %></a></li>
               <% end %>
-           </ul>
-         </li>
+            </ul>
+          </li>
         </ul>
       </nav>
+      <div id="alert-space"></div>
       <main id="quiz">
         <%= yield %>
       </main>
     </div>
     <footer class="text-center muted">
-      <small>Created by <a href="http://github.com/rbndickson" tabIndex="-1">Robin Dickson</a> | Routes from <a href="http://guides.rubyonrails.org/routing.html">RailsGuides</a></small>
+      <small>
+        Created by <a href="http://github.com/rbndickson" tabIndex="-1">Robin Dickson</a> | Routes from <a href="http://guides.rubyonrails.org/routing.html">Rails Guides</a>
+      </small>
     </footer>
   </body>
 </html>

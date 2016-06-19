@@ -11,11 +11,11 @@ use Rack::Session::Cookie, key: 'rack.session',
 RESOURCES = %w(photo video post user)
 COLUMN_TITLES = %w(http_verb path controller_action used_for)
 ROUTE_NAMES = %w(index new create show edit update destroy)
-LEVEL_TO_BLANKS = { normal: 5, hard: 10, expert: 20, chuck_norris: 27 }
+LEVEL_TO_BLANK_AMOUNT = { normal: 5, hard: 10, expert: 20, chuck_norris: 27 }
 
 helpers do
   def random_resource
-    RESOURCES.sample
+    session[:resource] = RESOURCES.sample
   end
 
   def resource_data(resource)
@@ -76,7 +76,7 @@ helpers do
   end
 
   def display_data(resource)
-    cells_to_erase = table_cells.sample(blanks)
+    cells_to_erase = table_cells.sample(blank_amount)
     data = resource_data(resource)
 
     cells_to_erase.each_with_object(data) do |(route, column), obj|
@@ -84,38 +84,8 @@ helpers do
     end
   end
 
-  def correct_answer(input)
-    route, column = input.split('_', 2)
-    session[:answer_data][route][column]
-  end
-
-  def create_cell_id(input)
-    '#' + input + '_cell'
-  end
-
-  def create_session
-    session.clear
-    session[:blanks] = blanks
-    session[:correct] = 0
-    session[:pass] = 0
-    resource = random_resource
-    session[:answer_data] = resource_data(resource)
-    session[:display_data] = display_data(resource)
-  end
-
-  def blanks
-    LEVEL_TO_BLANKS[params['level'].to_sym]
-  end
-
-  def message(cell_id, html)
-    {
-      cell_id: cell_id,
-      html: html,
-      pass_amount: session[:pass],
-      correct_amount: session[:correct],
-      questions_completed: session[:pass] + session[:correct],
-      total_questions: session[:blanks]
-    }
+  def blank_amount
+    LEVEL_TO_BLANK_AMOUNT[params['level'].to_sym]
   end
 end
 
@@ -124,37 +94,15 @@ get '/' do
 end
 
 get '/quiz/:level' do
-  create_session
+  @display_data = display_data(random_resource)
   erb :quiz
 end
 
 get '/answers/:resource' do
-  session[:display_data] = resource_data(params['resource'])
+  @display_data = resource_data(params['resource'])
   erb :quiz
 end
 
-post '/check_answer' do
-  question = params['question']
-  cell_id = create_cell_id(question)
-  correct_answer = correct_answer(question)
-
-  if params['user_answer'] == correct_answer
-    session[:correct] += 1
-    html = "<td class='success' id='#{cell_id[1..-1]}'>" + correct_answer + '</td>'
-    msg = message(cell_id, html).merge!(correct: true)
-  else
-    msg = { correct: false, cell_id: cell_id }
-  end
-
-  msg.to_json
-end
-
-post '/show_answer' do
-  session[:pass] += 1
-  question = params[:value]
-  cell_id = create_cell_id(question)
-  correct_answer = correct_answer(question)
-  html = "<td class='pass' id='#{cell_id[1..-1]}'>" + correct_answer + '</td>'
-  msg = message(cell_id, html)
-  msg.to_json
+get '/answers' do
+  resource_data(session[:resource]).to_json
 end

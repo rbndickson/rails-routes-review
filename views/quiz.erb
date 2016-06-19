@@ -8,23 +8,23 @@
     </tr>
   </thead>
   <tbody>
-    <% session[:display_data].each do |route, column_title |  %>
+    <% @display_data.each do |route, column_title |  %>
       <tr>
         <% column_title.each do |column_title, cell_text| %>
 
           <% if cell_text.empty? %>
-            <td id=<%= "#{route}_#{column_title}_cell" %>>
-              <form class="form-inline" id="check_answer" action="/check_answer" method="post">
-                <% if column_title == :used_for %>
-                  <input class="input-xlarge" id=<%= "#{route}_#{column_title}" %> type="text" name="user_answer" autofocus></input>
+            <td id=<%= [route, column_title, 'cell'].join('_') %>>
+              <form class="form-inline" action="#" method="post" autocomplete="off">
+                <% if column_title == "used_for" %>
+                  <input class="input-xlarge" id=<%= [route, column_title].join('_') %> type="text" name="user_answer" autofocus></input>
                 <% else %>
-                  <input class="input-small" id=<%= "#{route}_#{column_title}" %> type="text" name="user_answer" autofocus></input>
+                  <input class="input-small" id=<%= [route, column_title].join('_') %> type="text" name="user_answer" autofocus></input>
                 <% end %>
               </form>
-              <button type="submit" id="show_answer_button" class="btn btn-small btn-warning" tabIndex="-1" value=<%= "#{route}_#{column_title}" %>>reveal</button>
+              <button type="submit" id=<%= [route, column_title].join('_') %> class="btn btn-small btn-warning" tabIndex="-1">Reveal</button>
             </td>
           <% else %>
-            <td id=<%= "#{route}_#{column_title}" %>><%= cell_text %></td>
+            <td id=<%= [route, column_title, 'cell'].join('_') %>><%= cell_text %></td>
           <% end %>
 
         <% end %>

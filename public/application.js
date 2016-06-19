@@ -1,63 +1,95 @@
 $(function(){
-  $( "button[type=submit]" ).click( function() {
-    $.post( "/show_answer", { value: $( this ).val() }, function( msg ) {
-      msg = JSON.parse( msg );
-      $( msg.cell_id ).replaceWith( msg.html );
-      checkFinished(msg);
-    });
-    return false;
+  var answers;
+  var enter_key = 13;
+
+  $.get( "/answers", function( msg ) {
+    answers = JSON.parse( msg );
   });
 
-  $( 'input[type=text]' ).keypress( function ( e ) {
-    if ( e.which == 13 ) {
-      $.post( '/check_answer', { user_answer: $( this ).val(), question: this.id }, function( msg ) {
-        msg = JSON.parse( msg );
-        if ( msg.correct === true ) {
-          $( msg.cell_id ).replaceWith( msg.html );
-          checkFinished(msg);
-        } else {
-          $( msg.cell_id ).addClass( "pass" );
-          $( msg.cell_id ).effect( "bounce", { times: 3 }, "slow" );
-        }
-      });
-      return false;
+  $( "button[type=submit]" ).click( function(e) {
+    e.preventDefault();
+    var question = this.id;
+    var answer = getAnswer( question );
+    updateCell( question, answer, "incorrect" );
+    checkFinished();
+  });
+
+  $( "input[type=text]" ).keypress( function ( e ) {
+
+    if ( e.which == enter_key ) {
+      e.preventDefault();
+      var user_answer = $( this ).val();
+      var question = this.id;
+      var answer = getAnswer( question );
+
+      if ( user_answer === answer ) {
+        updateCell( question, answer, "correct" );
+        checkFinished();
+      } else {
+        $( "#" + question + "_cell" ).attr('class', 'incorrect');
+        $( "#" + question + "_cell" ).effect( "bounce", { times: 3 }, "slow" );
+      }
     }
   });
 
-  function checkFinished( msg ) {
-    if ( msg.questions_completed === msg.total_questions ) {
-      if ( msg.correct_amount === msg.total_questions ) {
-        fullMarksMessage( msg );
-      } else {
-        gameOverMessage( msg );
-      }
+  function getAnswer(question) {
+    var route = question.split(/_(.+)/)[0];
+    var column = question.split(/_(.+)/)[1];
+    return answers[route][column];
+  }
+
+  function updateCell( question, answer, css_class ) {
+    $( "#" + question ).replaceWith( answer );
+    $( "#" + question + "_cell button" ).remove();
+    $( "#" + question + "_cell" ).attr('class', css_class);
+  }
+
+  function checkFinished() {
+    if ( $( "input" ).length ) {
+      $( "input:first" ).focus();
     } else {
-      $( "form:first *:input[type!=hidden]:first" ).focus();
+      gameOverMessage();
     }
   }
 
-  function gameOverMessage( msg ) {
-    var alert_content = "You have finished! You scored " + score_text( msg ) + ".";
+  function gameOverMessage() {
+    if ( $( ".incorrect" ).length ) {
+      standardGameOverMessage();
+    } else {
+      fullMarksMessage();
+    }
+  }
 
-    $( "#quiz" ).prepend( $( "<div></div>", {
+  function standardGameOverMessage() {
+    var alert_content = "You have finished! You scored " + score_text() + ".";
+
+    $( "#alert-space" ).replaceWith( $( "<div></div>", {
       class: "alert alert-info",
       text: alert_content
     }));
   }
 
-  function fullMarksMessage( msg ) {
+  function fullMarksMessage() {
     var alert_content = "Well Done! You scored full marks - " +
-      score_text( msg ) + ". Time to try the next level!";
+      score_text() + ". Time to try the next level!";
 
-    $( "td.success" ).effect( "pulsate", { times: 1 }, 1500 );
+    $( "td.correct" ).effect( "pulsate", { times: 1 }, 1500 );
     $( "#quiz" ).css( "margin", "0px" );
-    $( "#quiz" ).prepend( $( "<div></div>", {
+    $( "#alert-space" ).replaceWith( $( "<div></div>", {
       class: "alert alert-success",
       text: alert_content
     }));
   }
 
-  function score_text( msg ) {
-    return msg.correct_amount + " out of " + msg.total_questions;
+  function score_text() {
+    return correct_amount() + " out of " + total_questions();
+  }
+
+  function correct_amount() {
+    return $( ".correct" ).length;
+  }
+
+  function total_questions() {
+    return correct_amount() + $( ".incorrect" ).length;
   }
 });

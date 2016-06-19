@@ -7,8 +7,12 @@ nav {
   margin-bottom: 10px;
 }
 
+#alert-space {
+  height: 38px;
+}
+
 main {
-  margin-top: 58px;
+  margin-top: 20px;
 }
 
 footer {
@@ -47,13 +51,13 @@ div.alert {
   line-height: 32px;
 }
 
-td.success {
+td.correct {
   color: #3c763d;
   background-color: #d0e9c6;
   border-color: #d0e9c6;
 }
 
-td.pass {
+td.incorrect {
   color: #a94442;
   background-color: #f2dede;
   border-color: #ebcccc;

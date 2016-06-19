@@ -71,7 +71,7 @@ describe 'after entering a correct answer', :type => :feature do
       find('input#new_http_verb').send_keys('GET', :enter)
     end
 
-    expect(page).to have_css('.success')
+    expect(page).to have_css('.correct')
   end
 end
 
@@ -103,7 +103,7 @@ describe 'after entering an incorrect answer', :type => :feature do
       find('input#new_http_verb').send_keys('???', :enter)
     end
 
-    expect(page).to have_css('.pass')
+    expect(page).to have_css('.incorrect')
   end
 end
 
