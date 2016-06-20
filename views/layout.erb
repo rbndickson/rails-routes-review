@@ -18,7 +18,6 @@
       </header>
       <nav>
         <ul class="nav nav-pills">
-<<<<<<< HEAD
           <li<%=' class="active"' if params[:level]== 'normal' %> >
             <a href="/quiz/normal" tabIndex="-1">Normal</a>
           </li>
@@ -31,12 +30,6 @@
           <li<%=' class="active"' if params[:level]== 'chuck_norris' %>>
             <a href="/quiz/chuck_norris" tabIndex="-1">Chuck Norris</a>
           </li>
-=======
-          <li<%=' class="active"' if params[:level]== 'normal' %> ><a href="/quiz/normal" tabIndex="-1">Normal</a></li>
-          <li<%=' class="active"' if params[:level]== 'hard' %>><a href="/quiz/hard" tabIndex="-1">Hard</a></li>
-          <li<%=' class="active"' if params[:level]== 'expert' %>><a href="/quiz/expert" tabIndex="-1">Expert</a></li>
-          <li<%=' class="active"' if params[:level]== 'chuck_norris' %>><a href="/quiz/chuck_norris" tabIndex="-1">Chuck norris</a></li>
->>>>>>> master
           <% if params[:resource] == :answer %>
             <li class="dropdown active">
           <% else %>
