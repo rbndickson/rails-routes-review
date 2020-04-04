@@ -8,4 +8,6 @@ group :test do
   gem 'rspec'
   gem 'capybara'
   gem 'selenium-webdriver'
+  gem 'geckodriver-helper'
+  gem 'puma'
 end
